@@ -1,33 +1,42 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Fake Job Scam Detection</title>
+    <meta charset="UTF-8">
+    <title>Fake Job Scam Detector</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
 
-<div class="container">
-    <h2>Fake Job & Internship Scam Detection</h2>
+<div class="card">
+    <h1>Fake Job Scam Detector</h1>
+    <p class="subtitle">AI-powered job authenticity checker</p>
 
-    <form action="/check" method="post">
+    <form method="POST">
+        <textarea 
+            name="job_text" 
+            placeholder="Paste job description here..." 
+            required></textarea>
 
-        <label>Job Title</label>
-        <input type="text" name="title" required>
-
-        <label>Company Name</label>
-        <input type="text" name="company" required>
-
-        <label>Job Description</label>
-        <textarea name="description" rows="4" required></textarea>
-
-        <label>Contact Email</label>
-        <input type="email" name="email" required>
-
-        <label>Salary Offered</label>
-        <input type="text" name="salary">
-
-        <button type="submit">Check Scam</button>
+        <button type="submit">Analyze Job</button>
     </form>
+
+    {% if prediction %}
+    <div class="result">
+        <h2>{{ prediction }}</h2>
+
+        <div class="progress-bar">
+            <div 
+                class="progress" 
+                style="width: {{ probability|round(2) }}%;">
+            </div>
+        </div>
+
+        <p class="confidence">
+            Confidence: {{ probability|round(2) }}%
+        </p>
+    </div>
+    {% endif %}
 </div>
 
 </body>

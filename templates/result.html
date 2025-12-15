@@ -1,30 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Scam Detection Result</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Result</title>
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
 
-<div class="container">
-    <h2>Scam Detection Result</h2>
+<h2>Analysis Result</h2>
 
-    <h3>Risk Score: {{ score }} / 100</h3>
+<p><b>Risk Level:</b> {{ level }}</p>
+<p><b>Risk Score:</b> {{ score }} / 100</p>
 
-    {% if score >= 60 %}
-        <p style="color:red;"><b>⚠️ High Risk – Possible Scam</b></p>
-    {% else %}
-        <p style="color:green;"><b>✅ Low Risk – Likely Genuine</b></p>
-    {% endif %}
-
-    <ul>
-        {% for reason in reasons %}
-            <li>{{ reason }}</li>
-        {% endfor %}
-    </ul>
-
-    <a href="/">🔙 Check another job</a>
-</div>
+<a href="/">Check Another Job</a>
 
 </body>
 </html>
+

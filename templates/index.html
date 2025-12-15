@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fake Job Scam Detection</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="container">
+    <h2>Fake Job & Internship Scam Detection</h2>
+
+    <form action="/check" method="post">
+
+        <label>Job Title</label>
+        <input type="text" name="title" required>
+
+        <label>Company Name</label>
+        <input type="text" name="company" required>
+
+        <label>Job Description</label>
+        <textarea name="description" rows="4" required></textarea>
+
+        <label>Contact Email</label>
+        <input type="email" name="email" required>
+
+        <label>Salary Offered</label>
+        <input type="text" name="salary">
+
+        <button type="submit">Check Scam</button>
+    </form>
+</div>
+
+</body>
+</html>

@@ -1,55 +1,56 @@
-from flask import Flask, render_template, request
+from flask import Flask, request, render_template
+import pickle
+import os
+import nltk
+
+# Download required NLTK data
+nltk.download('punkt')
+nltk.download('stopwords')
 
 app = Flask(__name__)
 
-# Simple keyword-based prediction function
-def predict(job_text):
-    job_text = job_text.lower()
-
-    scam_keywords = [
-        "work from home",
-        "earn money fast",
-        "no experience required",
-        "investment required",
-        "registration fee",
-        "urgent hiring",
-        "click here",
-        "limited seats"
-    ]
-
-    score = 0
-
-    for word in scam_keywords:
-        if word in job_text:
-            score += 1
-
-    probability = min(score * 15, 100)
-
-    if probability > 50:
-        prediction = "⚠ High Risk – This job may be a scam!"
-    else:
-        prediction = "✅ Low Risk – This job seems legitimate."
-
-    return prediction, probability
+# Load model safely
+try:
+    model = pickle.load(open('model.pkl', 'rb'))
+    print("Model loaded successfully")
+except Exception as e:
+    print("Error loading model:", e)
+    model = None
 
 
-@app.route("/", methods=["GET", "POST"])
+# Home page
+@app.route('/')
 def home():
-    prediction = None
-    probability = 0
-
-    if request.method == "POST":
-        job_text = request.form["job_text"]
-        prediction, probability = predict(job_text)
-
-    return render_template(
-        "index.html",
-        prediction=prediction,
-        probability=probability
-    )
+    return render_template('index.html')
 
 
+# Prediction route
+@app.route('/predict', methods=['POST'])
+def predict():
+    try:
+        # Get input text
+        input_text = request.form.get('job_description')
+
+        if not input_text:
+            return "No input provided"
+
+        # Dummy processing (since real preprocessing not added here)
+        input_data = [len(input_text)]  # simple feature
+
+        # Prediction
+        if model is not None:
+            result = model.predict([input_data])[0]
+            output = "Fake Job" if result == 1 else "Real Job"
+        else:
+            output = "Model not loaded"
+
+        return render_template('index.html', prediction_text=output)
+
+    except Exception as e:
+        return f"Error occurred: {e}"
+
+
+# Run app
 if __name__ == "__main__":
-    if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
-    
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port)

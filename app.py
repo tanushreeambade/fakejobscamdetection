@@ -1,11 +1,6 @@
 from flask import Flask, request, render_template
 import pickle
 import os
-import nltk
-
-# Download required NLTK data
-nltk.download('punkt')
-nltk.download('stopwords')
 
 app = Flask(__name__)
 
@@ -18,36 +13,43 @@ except Exception as e:
     model = None
 
 
-# Home page
+# Home route
 @app.route('/')
 def home():
-    return render_template('index.html')
+    return '''
+    <h2>Fake Job Scam Detection</h2>
+    <form action="/predict" method="post">
+        <textarea name="job_description" placeholder="Enter job description" rows="5" cols="40"></textarea><br><br>
+        <button type="submit">Analyze Job</button>
+    </form>
+    '''
 
 
-# Prediction route
-@app.route('/predict', methods=['POST'])
+# Prediction route (FIXED)
+@app.route('/predict', methods=['GET', 'POST'])
 def predict():
-    try:
-        # Get input text
-        input_text = request.form.get('job_description')
+    if request.method == 'POST':
+        try:
+            input_text = request.form.get('job_description')
 
-        if not input_text:
-            return "No input provided"
+            if not input_text:
+                return "Please enter job description"
 
-        # Dummy processing (since real preprocessing not added here)
-        input_data = [len(input_text)]  # simple feature
+            # Simple feature (length-based dummy input)
+            input_data = [[len(input_text)]]
 
-        # Prediction
-        if model is not None:
-            result = model.predict([input_data])[0]
-            output = "Fake Job" if result == 1 else "Real Job"
-        else:
-            output = "Model not loaded"
+            if model is not None:
+                result = model.predict(input_data)[0]
+                output = "🚨 Fake Job" if result == 1 else "✅ Real Job"
+            else:
+                output = "Model not loaded"
 
-        return render_template('index.html', prediction_text=output)
+            return f"<h3>Result: {output}</h3><br><a href='/'>Go Back</a>"
 
-    except Exception as e:
-        return f"Error occurred: {e}"
+        except Exception as e:
+            return f"Error: {e}"
+
+    return "Use form to submit data"
 
 
 # Run app
